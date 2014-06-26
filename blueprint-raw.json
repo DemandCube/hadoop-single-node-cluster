@@ -11,31 +11,111 @@
     {
       "name" : "host_group_1",
       "components" : [
-        { "name":"DATANODE" },
-{ "name":"HDFS_CLIENT" },
-{ "name":"JOURNALNODE" },
-{ "name":"NAMENODE" },
-{ "name":"SECONDARY_NAMENODE" },
-{ "name":"ZKFC" },
-{ "name":"APP_TIMELINE_SERVER" },
-{ "name":"NODEMANAGER" },
-{ "name":"RESOURCEMANAGER" },
-{ "name":"YARN_CLIENT" },
-{ "name":"HISTORYSERVER" },
-{ "name":"MAPREDUCE2_CLIENT" },
-{ "name":"GANGLIA_MONITOR" },
-{ "name":"GANGLIA_SERVER" },
+        {
+          "name" : "STORM_REST_API"
+        },
+        {
+          "name" : "PIG"
+        },
+        {
+          "name" : "HISTORYSERVER"
+        },
+        {
+          "name" : "OOZIE_CLIENT"
+        },
+        {
+          "name" : "NAMENODE"
+        },
+        {
+          "name" : "SUPERVISOR"
+        },
+        {
+          "name" : "FALCON_SERVER"
+        },
+        {
+          "name" : "HCAT"
+        },
+        {
+          "name" : "AMBARI_SERVER"
+        },
+        {
+          "name" : "APP_TIMELINE_SERVER"
+        },
+        {
+          "name" : "HIVE_CLIENT"
+        },
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "NODEMANAGER"
+        },
+        {
+          "name" : "DATANODE"
+        },
+        {
+          "name" : "WEBHCAT_SERVER"
+        },
+        {
+          "name" : "RESOURCEMANAGER"
+        },
+        {
+          "name" : "ZOOKEEPER_SERVER"
+        },
+        {
+          "name" : "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name" : "STORM_UI_SERVER"
+        },
+        {
+          "name" : "HIVE_SERVER"
+        },
+        {
+          "name" : "OOZIE_SERVER"
+        },
+        {
+          "name" : "FALCON_CLIENT"
+        },
+        {
+          "name" : "NAGIOS_SERVER"
+        },
+        {
+          "name" : "SECONDARY_NAMENODE"
+        },
+        {
+          "name" : "TEZ_CLIENT"
+        },
+        {
+          "name" : "HIVE_METASTORE"
+        },
+        {
+          "name" : "GANGLIA_SERVER"
+        },
+        {
+          "name" : "SQOOP"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "MYSQL_SERVER"
+        },
+        {
+          "name" : "GANGLIA_MONITOR"
+        },
+        {
+          "name" : "DRPC_SERVER"
+        },
+        {
+          "name" : "NIMBUS"
+        },
 { "name":"HBASE_CLIENT" },
 { "name":"HBASE_MASTER" },
-{ "name":"HBASE_REGIONSERVER" },
-{ "name":"HIVE_CLIENT" },
-{ "name":"HIVE_METASTORE" },
-{ "name":"HIVE_SERVER" },
-{ "name":"MYSQL_SERVER" },
-{ "name":"NAGIOS_SERVER" },
-{ "name":"ZOOKEEPER_CLIENT" },
-{ "name":"ZOOKEEPER_SERVER" },
-{ "name":"AMBARI_SERVER" }
+{ "name":"HBASE_REGIONSERVER" }
       ],
       "cardinality" : "1"
     }
