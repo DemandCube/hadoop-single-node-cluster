@@ -112,7 +112,10 @@
         },
         {
           "name" : "NIMBUS"
-        }
+        },
+{ "name":"HBASE_CLIENT" },
+{ "name":"HBASE_MASTER" },
+{ "name":"HBASE_REGIONSERVER" }
       ],
       "cardinality" : "1"
     }
