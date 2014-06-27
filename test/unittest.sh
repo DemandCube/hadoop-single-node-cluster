@@ -1,6 +1,6 @@
 #!/bin/sh
 
-curl -sSL https://raw.githubusercontent.com/DemandCube/hadoop-single-node-cluster/master/INSTALL-HADOOP | bash -s -- -r -f
+curl -sSL https://raw.githubusercontent.com/jeroldleslie/hadoop-single-node-cluster/master/INSTALL-HADOOP | bash -s -- -r -f
 
 set -e
 echo ""
