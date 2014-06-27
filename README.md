@@ -28,6 +28,8 @@ cd hadoop-single-node-cluster
 NOTE: Meant to be run as root
 
 
+# Services with their components.
+
 ## Available components to configure blueprint.json
 
 ## What is blueprint?
@@ -35,8 +37,8 @@ NOTE: Meant to be run as root
    
    The component names are Ambari specific, for convenience you can find the the HDP-2.1 services with their components below.
    
-HDFS - DATANODE, HDFS_CLIENT, JOURNALNODE, NAMENODE, SECONDARY_NAMENODE, ZKFC
-YARN		APP_TIMELINE_SERVER, NODEMANAGER, RESOURCEMANAGER, YARN_CLIENT
+Hdfs - DATANODE, HDFS_CLIENT, JOURNALNODE, NAMENODE, SECONDARY_NAMENODE, ZKFC
+Yarn		APP_TIMELINE_SERVER, NODEMANAGER, RESOURCEMANAGER, YARN_CLIENT
 MAPREDUCE2	HISTORYSERVER, MAPREDUCE2_CLIENT
 GANGLIA		GANGLIA_MONITOR, GANGLIA_SERVER
 HBASE		HBASE_CLIENT, HBASE_MASTER, HBASE_REGIONSERVER
