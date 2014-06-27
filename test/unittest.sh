@@ -1,6 +1,6 @@
 #!/bin/sh
 
-curl -sSL https://raw.githubusercontent.com/jeroldleslie/hadoop-single-node-cluster/master/INSTALL-HADOOP | bash -s -- -r -f
+curl -sSL https://raw.githubusercontent.com/DemandCube/hadoop-single-node-cluster/master/INSTALL-HADOOP | bash -s -- -r
 
 set -e
 echo ""
@@ -51,7 +51,6 @@ for sName in "${sNames[@]}"; do
                 echo $sName
                 HMASTER=true
         fi
-     #echo $sName
 done
 
 
@@ -79,12 +78,10 @@ else
 fi
 
 echo "3. HIVE"
-#curl -s https://raw.githubusercontent.com/DemandCube/hadoop-single-node-cluster/master/test/hivetest.sql > hivetest.sql
 echo "DROP TABLE IF EXISTS pokes;CREATE TABLE pokes (foo INT, bar STRING);DROP TABLE IF EXISTS invites;CREATE TABLE invites (foo INT, bar STRING) PARTITIONED BY (ds STRING);SHOW TABLES;" >> /tmp/hivetest.sql
 hive -f /tmp/hivetest.sql && result+=('3. [PASS] - HIVE') || (result+=('3. [FAIL] - HIVE'); EXIT_VALUE=1;)
 
 echo "4. YARN"
-
 if [ "$R_MANAGER" == "true" ] && [ "$N_MANAGER" == "true" ] ; then
         sudo -u hdfs yarn jar /usr/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar pi 16 1000 && result+=('4. [PASS] - YARN') || result+=('4. [FAIL] - YARN')
 else
@@ -113,7 +110,6 @@ echo ""
 for i in "${result[@]}"
 do
    echo "$i"
-   # or do whatever with individual element of the array
 done
 echo ""
 echo "*************************************************************************************************************"
