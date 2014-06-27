@@ -28,16 +28,17 @@ cd hadoop-single-node-cluster
 NOTE: Meant to be run as root
 
 
-# Available components to configure blueprint.json
+## Available components to configure blueprint.json
 
 ## What is blueprint?
    A blueprint defines the logical structure of a cluster, without needing informations about the actual infrastructure. Therefore you can use the same blueprint for different amount of nodes, different IPs and different domain names.
    
    The component names are Ambari specific, for convenience you can find the the HDP-2.1 services with their components below.
+   
 HDFS        - DATANODE, HDFS_CLIENT, JOURNALNODE, NAMENODE, SECONDARY_NAMENODE, ZKFC
-YARN		   - APP_TIMELINE_SERVER, NODEMANAGER, RESOURCEMANAGER, YARN_CLIENT
-MAPREDUCE2	- HISTORYSERVER, MAPREDUCE2_CLIENT
-GANGLIA     - GANGLIA_MONITOR, GANGLIA_SERVER
+YARN		   - APP_TIMELINE_SERVER, NODEMANAGER, RESOURCEMANAGER, YARN_CLIENT\n
+MAPREDUCE2	- HISTORYSERVER, MAPREDUCE2_CLIENT\n
+GANGLIA     - GANGLIA_MONITOR, GANGLIA_SERVER\n
 HBASE		   - HBASE_CLIENT, HBASE_MASTER, HBASE_REGIONSERVER
 HIVE		   - HIVE_CLIENT, HIVE_METASTORE, HIVE_SERVER, MYSQL_SERVER
 HCATALOG	   - HCAT
