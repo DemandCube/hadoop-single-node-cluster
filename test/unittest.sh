@@ -97,7 +97,8 @@ fi
 echo "5. HBASE"
 echo "Identifying HMaster and HRegionServer..."
 if [ "$HMASTER" == "true" ] && [ "$HREGION" == "true" ] ; then
-        result+=('5. [PASS] - HBASE')
+        echo "disable 'test';drop 'test';create 'test', 'cf';put 'test', 'row1', 'cf:a', 'value1';put 'test', 'row2', 'cf:b', 'value2';put 'test', 'row3', 'cf:c', 'value3';scan 'test';exit;" >> /tmp/hbasescript.rb
+        hbase shell /tmp/hbasescript.sql && result+=('5. [PASS] - HBASE') || (result+=('5. [FAIL] - HBASE'); EXIT_VALUE=1;)
 else
         result+=('5. [FAIL] - HBASE');
         EXIT_VALUE=1;
