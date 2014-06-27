@@ -271,7 +271,7 @@ TMP_DIR=/tmp
 echo "Replace the dummy email address in the blueprint JSON file with the specified email address"
 
 if [ "$REMOTE" == "true" ] ; then
-    curl -s https://raw.githubusercontent.com/jeroldleslie/hadoop-single-node-cluster/master/blueprint-raw.json | sed s/NAGIOS_CONTACT_GOES_HERE/$email_contact/ > $TMP_DIR/blueprint.json
+    curl -s https://raw.githubusercontent.com/DemandCube/hadoop-single-node-cluster/master/blueprint-raw.json | sed s/NAGIOS_CONTACT_GOES_HERE/$email_contact/ > $TMP_DIR/blueprint.json
 else
     sed s/NAGIOS_CONTACT_GOES_HERE/$email_contact/ blueprint-raw.json > $TMP_DIR/blueprint.json    
 fi
@@ -292,7 +292,7 @@ echo "Replacing the dummy hostname in the cluster creation JSON file with this h
 # my_fqdn=$(hostname -f)
 
 if [ "$REMOTE" == "true" ] ; then
-    curl -s https://raw.githubusercontent.com/jeroldleslie/hadoop-single-node-cluster/master/cluster-creation-raw.json | sed s/FQDN_GOES_HERE/$my_fqdn/ > $TMP_DIR/cluster-creation.json
+    curl -s https://raw.githubusercontent.com/DemandCube/hadoop-single-node-cluster/master/cluster-creation-raw.json | sed s/FQDN_GOES_HERE/$my_fqdn/ > $TMP_DIR/cluster-creation.json
 else
     sed s/FQDN_GOES_HERE/$my_fqdn/ cluster-creation-raw.json > $TMP_DIR/cluster-creation.json
 fi
