@@ -9,7 +9,8 @@
 FORCE=false
 DEBUG=false
 REMOTE=false
-while getopts ":e:fdr" Option
+LIST_SERVICES=false
+while getopts ":e:fdrs" Option
 # Initial declaration.
 # a, b, c, d, e, f, and g are the flags expected.
 # The : after flag 'e' shows it will have an option passed with it.
@@ -20,6 +21,7 @@ do
 	f ) FORCE=true ;;
 	d ) DEBUG=true ;;
     r ) REMOTE=true ;;
+    s ) LIST_SERVICES=true ;;
 	* ) echo "Not recognized argument"; exit -1  ;;
   esac
 done
@@ -52,7 +54,7 @@ else
         echo ""
         if [ "$FORCE" == "false" ] ; then
             echo "Use: argument -f to force"
-            exit 1;
+            #exit 1;
         fi
     fi
 fi
@@ -66,7 +68,7 @@ if [ $UID -ne 0 ] ; then
     echo ""
     if [ "$FORCE" == "false" ] ; then
         echo "Use: argument -f to force"
-        exit 1;
+        #exit 1;
     fi
 fi
 
@@ -79,7 +81,7 @@ else
     printf "\n\n"
     if [ "$FORCE" == "false" ] ; then
         echo "Use: argument -f to force"
-        exit 1;
+        #exit 1;
     fi
 fi
 
@@ -93,7 +95,6 @@ if [[ $email_contact == "" ]] ; then
     echo "Using default email for nagios: ${email_contact}"
     echo "Add argument to custom install email"
 fi
-
 
 function check_http_status(){
     url=$1
@@ -181,8 +182,7 @@ function wait_until_some_http_status () {
         done
 }
 
-spinner()
-{
+spinner() {
     local thetime=$1
     local delay=0.75
     local spinstr='|/-\'
@@ -195,6 +195,31 @@ spinner()
     }
     printf "    \b\b\b\b"
 }
+
+function list_all_services () {
+
+    check_http_status  ' -u admin:admin -i  http://localhost:8080/api/v1/clusters/cl1' 200
+    
+    if [ $? -eq 0 ] ; then 
+    ALL_SERVICES_URL='curl -s -uadmin:admin http://localhost:8080/api/v1/clusters/cl1/services/'
+    SERVICES=`$ALL_SERVICES_URL`
+    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`
+
+    for SERVICE in $SERVICE_NAMES ; do
+        SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+        COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+        echo $SERVICE $COMPONENTS
+    done
+    fi
+}
+
+if [ "$LIST_SERVICES" == true ]; then
+    printf "\n\n"
+    echo "Listing all services and components"
+    echo "-----------------------------------"
+    list_all_services
+    exit 1 ;
+fi
 
 echo "First install and start needed services"
 sudo yum install -y ntp ntpdate ntp-doc  # in many installs, ex. RHEL EC2 AMI, we already have ntpd and ntpupdate installed
