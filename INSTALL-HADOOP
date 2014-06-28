@@ -54,7 +54,7 @@ else
         echo ""
         if [ "$FORCE" == "false" ] ; then
             echo "Use: argument -f to force"
-            #exit 1;
+            exit 1;
         fi
     fi
 fi
@@ -68,7 +68,7 @@ if [ $UID -ne 0 ] ; then
     echo ""
     if [ "$FORCE" == "false" ] ; then
         echo "Use: argument -f to force"
-        #exit 1;
+        exit 1;
     fi
 fi
 
@@ -81,7 +81,7 @@ else
     printf "\n\n"
     if [ "$FORCE" == "false" ] ; then
         echo "Use: argument -f to force"
-        #exit 1;
+        exit 1;
     fi
 fi
 
