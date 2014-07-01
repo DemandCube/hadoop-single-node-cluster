@@ -25,7 +25,7 @@ do
     r ) REMOTE=true ;;
     s ) LIST_SERVICES=true ;;
     a ) INSTALL_SERVICES_LIST=${OPTARG}
-	INSTALL=true
+	INSTALL=true 
         ;;
 	* ) echo "Not recognized argument"; exit -1  ;;
   esac
