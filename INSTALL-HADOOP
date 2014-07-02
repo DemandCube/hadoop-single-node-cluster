@@ -237,28 +237,27 @@ function suggest_services_install () {
     echo "Listing all services with components that can be installed"
     echo "----------------------------------------------------------"    
 
-    check_http_status  ' -u admin:admin -i  http://localhost:8080/api/v1/clusters/cl1' 200
+    FILE_NAME="list"
+    while read -r line
+    do
+        name=$line
+        SERVICE=`echo "$name" | awk '{print $1}'`
+        #echo $SERVICE
+        SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+        SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\"]`
+        #echo $SERVICE_STATUS
+    
+        if  [ "$SERVICE_STATUS" == "INSTALL_FAILED" ] || 
+            [ "$SERVICE_STATUS" == "UNKNOWN"  ]       ||
+	    [ "$SERVICE_STATUS" == "UNINSTALLING" ]   ||
+	    [ "$SERVICE_STATUS" == "UNINSTALLED" ]    ||
+	    [ "$SERVICE_STATUS" == "WIPING_OUT" ] ; then 
+           
+            COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+	    echo $SERVICE $COMPONENTS $SERVICE_STATUS
+        fi
 
-    ALL_SERVICES_URL='curl -s -uadmin:admin http://localhost:8080/api/v1/clusters/cl1/services/'
-    SERVICES=`$ALL_SERVICES_URL`
-    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`    
-
-    if [ $? -eq 0 ] ; then 
-        for SERVICE in $SERVICE_NAMES ; do
-            SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
-            SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\",]`
-            #echo $SERVICE_STATUS
-		if  [ "$SERVICE_STATUS" == "INSTALL_FAILED" ]  ||
-		    [ "$SERVICE_STATUS" == "UNKNOWN"  ] ||
-		    [ "$SERVICE_STATUS" == "UNINSTALLING" ] ||
-		    [ "$SERVICE_STATUS" == "UNINSTALLED" ] ||
-		    [ "$SERVICE_STATUS" == "WIPING_OUT" ] ; then
-		
-	             COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
-	             echo $SERVICE $COMPONENTS
-	        fi
-        done
-    fi
+     done < "$FILE_NAME"
 }
 
 function list_all_services () {
