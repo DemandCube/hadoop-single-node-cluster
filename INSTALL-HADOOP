@@ -25,7 +25,8 @@ do
     r ) REMOTE=true ;;
     s ) LIST_SERVICES=true ;;
     a ) INSTALL_SERVICES_LIST=${OPTARG}
-	INSTALL=true 
+	INSTALL=true
+	FORCE=true
         ;;
 	* ) echo "Not recognized argument"; exit -1  ;;
   esac
@@ -58,7 +59,7 @@ else
         echo ""
         if [ "$FORCE" == "false" ] ; then
             echo "Use: argument -f to force"
-            #exit 1;
+            exit 1;
         fi
     fi
 fi
