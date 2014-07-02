@@ -85,7 +85,7 @@ else
     printf "\n\n"
     if [ "$FORCE" == "false" ] ; then
         echo "Use: argument -f to force"
-        #exit 1;
+        exit 1;
     fi
 fi
 
@@ -200,21 +200,74 @@ spinner() {
     printf "    \b\b\b\b"
 }
 
-function list_all_services () {
+function list_installed_services () {
+
+    printf "\n"
+    echo "Listing all installed services with components"
+    echo "---------------------------------------------"    
 
     check_http_status  ' -u admin:admin -i  http://localhost:8080/api/v1/clusters/cl1' 200
-    
-    if [ $? -eq 0 ] ; then 
+
     ALL_SERVICES_URL='curl -s -uadmin:admin http://localhost:8080/api/v1/clusters/cl1/services/'
     SERVICES=`$ALL_SERVICES_URL`
-    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`
+    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`    
 
-    for SERVICE in $SERVICE_NAMES ; do
-        SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
-        COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
-        echo $SERVICE $COMPONENTS
-    done
+    if [ $? -eq 0 ] ; then 
+        for SERVICE in $SERVICE_NAMES ; do
+            SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+            SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\",]`
+            #echo $SERVICE_STATUS
+		if  [ "$SERVICE_STATUS" != "INSTALL_FAILED" ] && 
+		    [ "$SERVICE_STATUS" != "UNKNOWN"  ] &&
+		    [ "$SERVICE_STATUS" != "UNINSTALLING" ] &&
+		    [ "$SERVICE_STATUS" != "UNINSTALLED" ] &&
+		    [ "$SERVICE_STATUS" != "WIPING_OUT" ] ; then
+		
+	             COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+	             echo $SERVICE $COMPONENTS
+	        fi
+        done
     fi
+}
+
+function suggest_services_install () {
+
+    printf "\n"
+    echo "Listing all services with components that can be installed"
+    echo "----------------------------------------------------------"    
+
+    check_http_status  ' -u admin:admin -i  http://localhost:8080/api/v1/clusters/cl1' 200
+
+    ALL_SERVICES_URL='curl -s -uadmin:admin http://localhost:8080/api/v1/clusters/cl1/services/'
+    SERVICES=`$ALL_SERVICES_URL`
+    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`    
+
+    if [ $? -eq 0 ] ; then 
+        for SERVICE in $SERVICE_NAMES ; do
+            SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+            SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\",]`
+            #echo $SERVICE_STATUS
+		if  [ "$SERVICE_STATUS" == "INSTALL_FAILED" ]  ||
+		    [ "$SERVICE_STATUS" == "UNKNOWN"  ] ||
+		    [ "$SERVICE_STATUS" == "UNINSTALLING" ] ||
+		    [ "$SERVICE_STATUS" == "UNINSTALLED" ] ||
+		    [ "$SERVICE_STATUS" == "WIPING_OUT" ] ; then
+		
+	             COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+	             echo $SERVICE $COMPONENTS
+	        fi
+        done
+    fi
+}
+
+function list_all_services () {
+    
+    FILENAME="list"
+    while read -r line
+    do
+        SERVICE_NAME=$line
+            echo "$SERVICE_NAME"
+    done < "$FILENAME"
 }
 
 if [ "$LIST_SERVICES" == true ]; then
@@ -233,7 +286,11 @@ function install_selected_services () {
     for SERVICE in $INSTALL_SERVICES_LIST ; do
 	curl -v -X POST http://admin:admin@localhost:8080/api/v1/clusters/cl1/services/$SERVICE --header "Content-Type:application/json" --header "X-Requested-By:mycompany"
     done
+    
+    list_installed_services
+    suggest_services_install
 }
+
 
 if [ "$INSTALL" == true ] ; then
     install_selected_services
