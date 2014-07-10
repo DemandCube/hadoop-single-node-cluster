@@ -1,7 +1,7 @@
 hadoop-single-node-cluster
 =======================
-my test
-This will install a single node hadoop cluster on a machine with single command.  This is intended as use for a dev setup or simple testing.
+
+This will install a single node hadoop cluster on a machine with single command.  This is intended as use for a dev setup or simple testing..
 
 - This is part of [NeverwinterDP the Data Pipeline for Hadoop](https://github.com/DemandCube/NeverwinterDP)
 
