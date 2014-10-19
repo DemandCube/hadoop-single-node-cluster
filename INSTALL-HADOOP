@@ -9,7 +9,10 @@
 FORCE=false
 DEBUG=false
 REMOTE=false
-while getopts ":e:fdr" Option
+LIST_SERVICES=false
+INSTALL=false
+INSTALL_SERVICES_LIST=""
+while getopts ":e:fdrsa:" Option
 # Initial declaration.
 # a, b, c, d, e, f, and g are the flags expected.
 # The : after flag 'e' shows it will have an option passed with it.
@@ -20,11 +23,15 @@ do
 	f ) FORCE=true ;;
 	d ) DEBUG=true ;;
     r ) REMOTE=true ;;
+    s ) LIST_SERVICES=true ;;
+    a ) INSTALL_SERVICES_LIST=${OPTARG}
+	INSTALL=true
+	FORCE=true
+        ;;
 	* ) echo "Not recognized argument"; exit -1  ;;
   esac
 done
 shift $(($OPTIND - 1))
-
 
 if [ -f HADOOP-SINGLE-NODE-CLUSTER ] ; then
     cat HADOOP-SINGLE-NODE-CLUSTER
@@ -93,7 +100,6 @@ if [[ $email_contact == "" ]] ; then
     echo "Using default email for nagios: ${email_contact}"
     echo "Add argument to custom install email"
 fi
-
 
 function check_http_status(){
     url=$1
@@ -181,8 +187,7 @@ function wait_until_some_http_status () {
         done
 }
 
-spinner()
-{
+spinner() {
     local thetime=$1
     local delay=0.75
     local spinstr='|/-\'
@@ -195,6 +200,102 @@ spinner()
     }
     printf "    \b\b\b\b"
 }
+
+function list_installed_services () {
+
+    printf "\n"
+    echo "Listing all installed services with components"
+    echo "---------------------------------------------"    
+
+    check_http_status  ' -u admin:admin -i  http://localhost:8080/api/v1/clusters/cl1' 200
+
+    ALL_SERVICES_URL='curl -s -uadmin:admin http://localhost:8080/api/v1/clusters/cl1/services/'
+    SERVICES=`$ALL_SERVICES_URL`
+    SERVICE_NAMES=`echo "$SERVICES" | grep service_name | awk '{print $3}' | tr -d [\"]`    
+
+    if [ $? -eq 0 ] ; then 
+        for SERVICE in $SERVICE_NAMES ; do
+            SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+            SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\",]`
+            #echo $SERVICE_STATUS
+		if  [ "$SERVICE_STATUS" != "INSTALL_FAILED" ] && 
+		    [ "$SERVICE_STATUS" != "UNKNOWN"  ] &&
+		    [ "$SERVICE_STATUS" != "UNINSTALLING" ] &&
+		    [ "$SERVICE_STATUS" != "UNINSTALLED" ] &&
+		    [ "$SERVICE_STATUS" != "WIPING_OUT" ] ; then
+		
+	             COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+	             echo $SERVICE $COMPONENTS
+	        fi
+        done
+    fi
+}
+
+function suggest_services_install () {
+
+    printf "\n"
+    echo "Listing all services with components that can be installed"
+    echo "----------------------------------------------------------"    
+
+    FILE_NAME="list"
+    while read -r line
+    do
+        name=$line
+        SERVICE=`echo "$name" | awk '{print $1}'`
+        #echo $SERVICE
+        SERVICE_URL=`$ALL_SERVICES_URL$SERVICE`
+        SERVICE_STATUS=`echo "$SERVICE_URL" | grep -w "state" | awk '{print $3}' | tr -d [\"]`
+        #echo $SERVICE_STATUS
+    
+        if  [ "$SERVICE_STATUS" == "INSTALL_FAILED" ] || 
+            [ "$SERVICE_STATUS" == "UNKNOWN"  ]       ||
+	    [ "$SERVICE_STATUS" == "UNINSTALLING" ]   ||
+	    [ "$SERVICE_STATUS" == "UNINSTALLED" ]    ||
+	    [ "$SERVICE_STATUS" == "WIPING_OUT" ] ; then 
+           
+            COMPONENTS=`echo "$SERVICE_URL" | grep component_name | awk '{print $3}' | tr -d [\",]`
+	    echo $SERVICE $COMPONENTS $SERVICE_STATUS
+        fi
+
+     done < "$FILE_NAME"
+}
+
+function list_all_services () {
+    
+    FILENAME="list"
+    while read -r line
+    do
+        SERVICE_NAME=$line
+            echo "$SERVICE_NAME"
+    done < "$FILENAME"
+}
+
+if [ "$LIST_SERVICES" == true ]; then
+    printf "\n\n"
+    echo "Listing all services and components"
+    echo "-----------------------------------"
+    list_all_services
+    exit 1 ;
+fi
+
+function install_selected_services () {
+    
+    INSTALL_URL='curl -v -X POST http://admin:admin@localhost:8080/api/v1/clusters/cl1/services/'
+    INSTALL_HEADER=' --header "Content-Type:application/json" --header "X-Requested-By:mycompany"'
+    
+    for SERVICE in $INSTALL_SERVICES_LIST ; do
+	curl -v -X POST http://admin:admin@localhost:8080/api/v1/clusters/cl1/services/$SERVICE --header "Content-Type:application/json" --header "X-Requested-By:mycompany"
+    done
+    
+    list_installed_services
+    suggest_services_install
+}
+
+
+if [ "$INSTALL" == true ] ; then
+    install_selected_services
+    exit 1 ;
+fi
 
 echo "First install and start needed services"
 sudo yum install -y ntp ntpdate ntp-doc  # in many installs, ex. RHEL EC2 AMI, we already have ntpd and ntpupdate installed
